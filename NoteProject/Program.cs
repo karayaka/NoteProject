@@ -1,7 +1,13 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using NoteProject.NoteDataContexts;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Add DbContext
+var cnnc = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddContext(cnnc);
 
 var app = builder.Build();
 

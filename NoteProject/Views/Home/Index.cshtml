@@ -3,7 +3,80 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div class="text-center">
+        <input type="text" class="form-control" id="rootNoteText">
+        <button type="button" class="btn btn-primary" onclick="sendNote(0)">Gönder</button>
+        <div id="rootNote">
+
+        </div>
+        
+    </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            GetNotes();
+        });
+
+        function sendNote(id) {
+            var note;
+            if (id == 0) {
+                note = $('#rootNoteText').val();
+            } else {
+                note = $('#msg_'+id).val();
+            }
+
+            $.post("Home/SendNote",
+                {
+                    NoteDesc: note,
+                    ParentID: id
+                },
+                function (data, status) {
+                    console.log("Data: " + data + "\nStatus: " + status);
+                }
+            );
+        }
+        function GetNotes() {
+            $.get("Home/GetNotes", function (data, status) {
+                
+                addNotes(data);
+            });
+        }
+        function addNotes(datas) {
+            for (let i = 0; i < datas.length; i++) {
+                var data = datas[i];
+                prepareNotes(data.id, data.noteDesc, data.parentNoteID);
+            }
+        }
+        function prepareNotes(id, desc, parentid) {
+            if (parentid == null) {
+                $("#rootNote").prepend(drawNoteItem(id, desc));
+            } else {
+                $('#chl_' + parentid + '').prepend(drawNoteItem(id, desc))
+                console.log("child_ciz" + parentid);
+            }
+        }
+
+        function drawNoteItem(id, desc) {
+
+            var item = '<div class="border border-primary" id="dv_'+id+'">' +
+                '<span id = "spn_'+id+'">' + desc+'</span>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<input type="text" class="form-control" id="msg_'+id+'">' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<button type="button" class="btn btn-primary" onclick="sendNote(' + id + ')">Gönder</button>' +
+                '</div>' +
+                '</div>' +
+                '<div id="chl_'+id+'" class="border border-success">'+
+                '</div>'+
+                '</div>';
+            return item;
+        }
+
+
+    </script>
+}
 
