@@ -36,6 +36,7 @@ public class HomeController : Controller
     {
         try
         {
+            //notlar parentid leri ile birlikte ui a dönülüyor ve her child kendi parent objesinin altına yerleşiyor
             var notes = await db.Notes.OrderBy(o => o.ID).Select(s => new{s.ID,s.NoteDesc,s.ParentNoteID }).ToListAsync();
             return Ok(notes);
         }
@@ -49,6 +50,7 @@ public class HomeController : Controller
     {
         try
         {
+            //her child kendi parentini tutuyor
             var noteModel = new NoteModel()
             {
                 NoteDesc = model.NoteDesc,
